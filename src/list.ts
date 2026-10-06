@@ -8,10 +8,19 @@ const SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"];
 const CREDENTIALS_PATH = "secrets/credentials.json";
 const TOKEN_PATH = "secrets/token.json";
 
+type Token = { client_id: string; client_secret: string; refresh_token?: string | null };
+
+// local-auth returns a client from an older google-auth-library that googleapis
+// doesn't recognize (it silently sends no credentials), so always build our own.
+function clientFromToken(token: Token) {
+  const client = new google.auth.OAuth2(token.client_id, token.client_secret);
+  client.setCredentials({ refresh_token: token.refresh_token });
+  return client;
+}
+
 async function authorize() {
   try {
-    const token = JSON.parse(await readFile(TOKEN_PATH, "utf8"));
-    return google.auth.fromJSON(token);
+    return clientFromToken(JSON.parse(await readFile(TOKEN_PATH, "utf8")));
   } catch {
     // No saved token yet: run the browser consent flow.
   }
@@ -27,11 +36,11 @@ async function authorize() {
   };
   // The token grants mailbox read access: owner-only permissions.
   await writeFile(TOKEN_PATH, JSON.stringify(token), { mode: 0o600 });
-  return client;
+  return clientFromToken(token);
 }
 
 const auth = await authorize();
-const gmail = google.gmail({ version: "v1", auth: auth as any });
+const gmail = google.gmail({ version: "v1", auth });
 
 const profile = await gmail.users.getProfile({ userId: "me" });
 console.log(`Mailbox: ${profile.data.emailAddress}\n`);
