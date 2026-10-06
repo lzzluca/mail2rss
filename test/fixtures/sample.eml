@@ -1,0 +1,17 @@
+Subject: =?utf-8?Q?Crisi=20test=3A=20L=E2=80=99Italia=20=C3=A8=20pronta=3F?=
+From: Example News <news@example.com>
+To: <someone@example.org>
+Date: Sun, 4 Oct 2026 06:37:03 +0000
+Message-ID: <abc123@mail.example.com>
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="BOUNDARY"
+
+--BOUNDARY
+Content-Type: text/plain; charset="utf-8"
+
+Plain text body.
+--BOUNDARY
+Content-Type: text/html; charset="utf-8"
+
+<html><body><h1>Hello</h1><p>HTML body.</p></body></html>
+--BOUNDARY--
