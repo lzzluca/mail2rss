@@ -2,7 +2,7 @@
 import { google } from "googleapis";
 import { authorize } from "./auth.ts";
 
-const auth = await authorize();
+const auth = await authorize(true);
 const gmail = google.gmail({ version: "v1", auth });
 
 const profile = await gmail.users.getProfile({ userId: "me" });

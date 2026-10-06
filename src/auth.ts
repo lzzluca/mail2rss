@@ -17,10 +17,17 @@ function clientFromToken(token: Token) {
   return client;
 }
 
-export async function authorize() {
+// interactive: allowed to open a browser for consent (only on a machine with one).
+export async function authorize(interactive = false) {
   try {
     return clientFromToken(JSON.parse(await readFile(TOKEN_PATH, "utf8")));
-  } catch {
+  } catch (err) {
+    if (!interactive) {
+      throw new Error(
+        `Cannot read ${TOKEN_PATH} (${(err as Error).message}). ` +
+          "Run `npm run list` on a machine with a browser and copy secrets/ here.",
+      );
+    }
     // No saved token yet: run the browser consent flow.
   }
 

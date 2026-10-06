@@ -2,8 +2,13 @@ services:
   mail2rss:
     build: .
     restart: unless-stopped
+    # Run as the VPS user that owns secrets/ (luca, uid 1001), so it can read the 600 files.
+    user: "1001:1001"
     volumes:
       - ./secrets:/app/secrets:ro
+    # Feeds are regenerated on every start, so they can live in RAM.
+    tmpfs:
+      - /app/out
     networks:
       - freshrss
     # No ports published: only containers on the FreshRSS network can reach the feeds,
